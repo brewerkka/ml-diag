@@ -1,0 +1,12 @@
+{
+  "run_id": "demo_overfitting_2026_05_08",
+  "task": "tabular",
+  "dataset_name": "demo:overfitting_case",
+  "model_name": "mlp_h128_h64_dropout_off",
+  "framework": "pytorch",
+  "optimizer": "adam",
+  "learning_rate": 0.001,
+  "batch_size": 64,
+  "status": "completed",
+  "notes": "Demo run sourced from corpus; ground truth = overfitting."
+}

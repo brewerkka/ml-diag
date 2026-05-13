@@ -1,0 +1,53 @@
+# Default configuration for structured_diag.
+#
+# This file pins research-relevant defaults. Anything that affects which runs
+# end up in `core` vs `extended` lives here so it can be cited in the thesis.
+
+project:
+  name: structured_diag
+  version: 0.1.0
+
+# --- Corpus loading ----------------------------------------------------------
+corpus:
+  # Path to a corpus directory produced by ml_diag (read-only).
+  # CLI scripts override this with --corpus.
+  path: null
+
+  # Required artefacts inside a corpus directory.
+  manifest_filename: corpus.manifest.json
+
+  # Required artefacts inside a single run directory.
+  run_meta_filename: meta.json
+  run_history_filename: history.csv
+
+# --- Benchmark partitioning (core vs extended) -------------------------------
+# These thresholds are used by structured_diag.benchmark.partition.
+# The exact numeric values are documented in docs/core_vs_extended_benchmark.md.
+partition:
+  # Severity values that are eligible for the core benchmark.
+  core_severities: ["moderate", "severe"]
+  # Severity values that always go to the extended benchmark.
+  extended_severities: ["mild"]
+
+  # Multi-label runs go to extended (single-label is required for core).
+  require_single_label_for_core: true
+
+  # Minimum number of training-history rows to be eligible for core.
+  # Runs with shorter history go to extended (insufficient signal).
+  min_history_epochs: 5
+
+  # Datasets that are considered near-saturated (top-1 close to ceiling).
+  # If a run on such a dataset has severity == mild, it is treated as
+  # "trivial mild leakage" and forced to extended. List is curated, not
+  # auto-derived, to avoid metric gaming.
+  near_saturated_datasets: []
+
+# --- Logging -----------------------------------------------------------------
+logging:
+  level: INFO
+  format: "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+
+# --- Output paths ------------------------------------------------------------
+paths:
+  results_dir: results
+  partition_subdir: partition

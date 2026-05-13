@@ -1,0 +1,100 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "structured_diag"
+version = "0.1.0"
+description = "Hierarchical diagnosis of ML training failures with constrained LLM arbitration, OOF stacking and split-conformal abstention."
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+license = { text = "MIT" }
+authors = [
+    { name = "Milena Pivovarova", email = "mapivovarova26@gmail.com" },
+    { name = "structured_diag contributors" },
+]
+keywords = [
+    "machine-learning",
+    "fault-diagnosis",
+    "large-language-models",
+    "constrained-generation",
+    "conformal-prediction",
+    "stacking",
+    "hierarchical-classification",
+    "training-failures",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Development Status :: 4 - Beta",
+]
+
+# Core runtime dependencies — everything required to import the public API
+# (cascade training, flat baseline, OOF stacking, conformal layer) without
+# the optional LLM / UI / dev tooling.
+dependencies = [
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "pyyaml>=6.0",
+    "scikit-learn>=1.3",
+    "joblib>=1.3",                # used by models.inference for artefact load/save
+    "matplotlib>=3.7",            # used by evaluation.case_outputs for plots
+    "pyarrow>=14.0",              # parquet engine for OOF predictions (Stage 57)
+]
+
+[project.optional-dependencies]
+# Development: linting, type-checking, tests.
+dev = [
+    "pytest>=7.4",
+    "ruff>=0.4",
+    "mypy>=1.8",
+    "pip-tools>=7.3",             # for generating requirements-frozen.txt
+]
+# Streamlit demo UI.
+ui = [
+    "streamlit>=1.30",
+]
+# LLM backends — install whichever you want to use.
+# At least one of (groq, anthropic) is needed for the "auto" arbitrator
+# chain to call an actual LLM; otherwise it degrades to the template
+# fallback (always available, deterministic).
+llm = [
+    "groq>=0.11",
+    "anthropic>=0.30",            # for the groq → anthropic → template fallback chain
+    "requests>=2.31",
+    "pydantic>=2.0",
+]
+# Thesis build pipeline — used by scripts/thesis_build/*.py to assemble the
+# .docx report. Kept as a separate extra so non-thesis users can skip it.
+thesis = [
+    "python-docx>=1.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/brewerka/structured_diag"
+Repository = "https://github.com/brewerka/structured_diag"
+Issues = "https://github.com/brewerka/structured_diag/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["structured_diag*"]   # NB: explicitly EXCLUDE the legacy ml_diag package
+
+[tool.setuptools.package-data]
+structured_diag = ["py.typed"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

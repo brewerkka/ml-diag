@@ -1,0 +1,12 @@
+{
+  "run_id": "demo_healthy_2026_05_08",
+  "task": "tabular",
+  "dataset_name": "demo:healthy_case",
+  "model_name": "mlp_h64_h32_dropout_0.2",
+  "framework": "pytorch",
+  "optimizer": "adam",
+  "learning_rate": 0.0008,
+  "batch_size": 64,
+  "status": "completed",
+  "notes": "Demo run sourced from corpus; ground truth = healthy."
+}

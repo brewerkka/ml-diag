@@ -1,0 +1,40 @@
+cff-version: 1.2.0
+title: "ml_diag: Hierarchical diagnosis of ML training failures with constrained LLM arbitration"
+message: "If you use this software in your research, please cite as below."
+type: software
+authors:
+  - given-names: Milena
+    family-names: Pivovarova
+    affiliation: "МИЭМ НИУ ВШЭ"
+    email: mapivovarova26@gmail.com
+abstract: >
+  A Python library for automated diagnosis and interpretation of ML training
+  failures using a hierarchical cascade combined with constrained LLM
+  arbitration (hard-snap), out-of-fold stacking meta-classifier, and
+  split-conformal abstention layer. Six fault classes: healthy, overfitting,
+  underfitting, leakage, label_noise, instability. Validated on three
+  controlled fault-injection corpora (180 / 500 / 800 runs) across 8 tabular
+  datasets.
+keywords:
+  - machine-learning
+  - fault-diagnosis
+  - large-language-models
+  - constrained-generation
+  - conformal-prediction
+  - stacking
+  - hierarchical-classification
+license: MIT
+repository-code: "https://github.com/brewerkka/ml-diag"
+version: "0.1.0"
+date-released: "2026-05-12"
+preferred-citation:
+  type: thesis
+  thesis-type: "Bachelor's thesis"
+  title: "Разработка системы автоматизированной диагностики и интерпретации ошибок моделей машинного обучения с применением LLM"
+  authors:
+    - given-names: Milena
+      family-names: Pivovarova
+  institution:
+    name: "МИЭМ НИУ ВШЭ (Школа цифровой инженерии)"
+  year: 2026
+  url: "https://github.com/brewerkka/ml-diag"

@@ -1,0 +1,31 @@
+from structured_diag.diagnosis.hybrid_resolver import (
+    POLICY_NAMES,
+    HybridDiagnosis,
+    HybridResolverConfig,
+    build_stacking_diagnoses,
+    build_stacking_with_conformal_diagnoses,
+    cascade_marginal_proba,
+    flat_proba_aligned,
+    resolve,
+    resolve_agreement_or_cascade,
+    resolve_agreement_or_flat,
+    resolve_batch,
+    resolve_confidence_weighted,
+    resolve_llm_arbitrate,
+)
+
+__all__ = [
+    "HybridDiagnosis",
+    "HybridResolverConfig",
+    "POLICY_NAMES",
+    "build_stacking_diagnoses",
+    "build_stacking_with_conformal_diagnoses",
+    "cascade_marginal_proba",
+    "flat_proba_aligned",
+    "resolve",
+    "resolve_agreement_or_cascade",
+    "resolve_agreement_or_flat",
+    "resolve_batch",
+    "resolve_confidence_weighted",
+    "resolve_llm_arbitrate",
+]
