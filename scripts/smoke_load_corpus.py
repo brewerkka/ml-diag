@@ -12,14 +12,14 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from structured_diag.data import (  # noqa: E402  (sys.path tweak above)
+from ml_diag.data import (                                      
     CorpusManifestError,
     RunLoadError,
     load_manifest,
     load_run,
     load_runs_table,
 )
-from structured_diag.utils import setup_logging  # noqa: E402
+from ml_diag.utils import setup_logging              
 
 
 def _parse_args() -> argparse.Namespace:

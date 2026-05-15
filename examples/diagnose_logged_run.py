@@ -27,7 +27,7 @@ def main() -> int:
         default=None,
         help="Where to write the case folder. Defaults to results/cases/<run_dir.name>/.",
     )
-    parser.add_argument("--backend", default="template", choices=["template", "anthropic"])
+    parser.add_argument("--backend", default="template", choices=["template", "groq", "ollama"])
     args = parser.parse_args()
     repo_root = Path(__file__).resolve().parent.parent
     cmd: list[str] = [

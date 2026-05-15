@@ -140,7 +140,7 @@ def _build_per_corpus_row(corpus_tag: str) -> dict[str, dict[str, float | None]]
 
 
 def _render_md(table: dict[str, dict[str, dict[str, float | None]]]) -> str:
-    md = """# Baseline comparison — structured_diag vs DeepFD-inspired
+    md = """# Baseline comparison — ml_diag vs DeepFD-inspired
 
 Headline metrics on the canonical test fold of each corpus
 (``StratifiedKFold(5, shuffle=True, random_state=0).first``).
@@ -225,7 +225,7 @@ Headline metrics on the canonical test fold of each corpus
         "complexity of OOF stacking + LLM arbitrator + conformal abstain "
         "doesn't pay off vs a simple decision tree on engineered features. "
         'This would be a candid, defensible finding for the thesis — "complexity is not always justified".\n'
-        "* All other patterns (typical case): the structured_diag "
+        "* All other patterns (typical case): the ml_diag "
         "pipeline strictly dominates the literature baseline on accuracy "
         "and matches or beats it on per-class F1.\n"
     )
@@ -251,7 +251,7 @@ def main() -> int:
         args.out_json.write_text(
             json.dumps(
                 {
-                    "comparison": "structured_diag vs deepfd_inspired",
+                    "comparison": "ml_diag vs deepfd_inspired",
                     "corpus_tags": list(_CORPUS_TAGS),
                     "policies_compared": [
                         "flat",

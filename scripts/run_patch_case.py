@@ -13,19 +13,19 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from structured_diag.actions import list_actions  # noqa: E402
-from structured_diag.data import load_run  # noqa: E402
-from structured_diag.features import (  # noqa: E402
+from ml_diag.actions import list_actions              
+from ml_diag.data import load_run              
+from ml_diag.features import (              
     build_data_integrity_features,
     build_feature_table,
 )
-from structured_diag.models import load_cascade  # noqa: E402
-from structured_diag.patch_eval import (  # noqa: E402
+from ml_diag.models import load_cascade              
+from ml_diag.patch_eval import (              
     PatchCase,
     evaluate_patch,
     write_patch_report,
 )
-from structured_diag.utils import setup_logging  # noqa: E402
+from ml_diag.utils import setup_logging              
 
 
 def _parse_args() -> argparse.Namespace:
@@ -157,7 +157,7 @@ def main() -> int:
         except KeyError as e:
             print(f"ERROR [{case.case_id}]: {e}", file=sys.stderr)
             continue
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:                
             print(f"ERROR [{case.case_id}]: {e}", file=sys.stderr)
             continue
         if args.cases is not None or args.out_dir is not None:

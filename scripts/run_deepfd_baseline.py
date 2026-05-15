@@ -13,14 +13,14 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-import numpy as np  # noqa: E402
-import pandas as pd  # noqa: E402
-from sklearn.tree import DecisionTreeClassifier  # noqa: E402
+import numpy as np              
+import pandas as pd              
+from sklearn.tree import DecisionTreeClassifier              
 
-from structured_diag.evaluation.metrics import classification_report  # noqa: E402
-from structured_diag.features import build_feature_table  # noqa: E402
-from structured_diag.models.flat_baseline import _split_train_test  # noqa: E402
-from structured_diag.utils.logging import get_logger, setup_logging  # noqa: E402
+from ml_diag.evaluation.metrics import classification_report              
+from ml_diag.features import build_feature_table              
+from ml_diag.models.flat_baseline import _split_train_test              
+from ml_diag.utils.logging import get_logger, setup_logging              
 
 _LOG = get_logger(__name__)
 

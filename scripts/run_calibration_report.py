@@ -12,16 +12,16 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-import numpy as np  # noqa: E402
-import pandas as pd  # noqa: E402
+import numpy as np              
+import pandas as pd              
 
-from structured_diag.evaluation.metrics import (  # noqa: E402
+from ml_diag.evaluation.metrics import (              
     brier_score_multiclass,
     expected_calibration_error,
     maximum_calibration_error,
     reliability_diagram_bins,
 )
-from structured_diag.labels import PRIMARY_LABELS  # noqa: E402
+from ml_diag.labels import PRIMARY_LABELS              
 
 POLICY_PROBA_GROUPS: dict[str, str] = {
     "flat": "flat",
@@ -50,7 +50,7 @@ def _extract_policy_proba(
 
 
 def _load_y_true_from_corpus(corpus_path: Path, run_ids: list[str]) -> np.ndarray:
-    from structured_diag.features import build_feature_table
+    from ml_diag.features import build_feature_table
 
     ftable = build_feature_table(corpus_path)
     labels_by_run = ftable.df["primary_label"].astype(str).to_dict()

@@ -8,7 +8,7 @@ from pathlib import Path
 
 _SRC_CANDIDATES = (
     Path(__file__).resolve().parent.parent / "src",
-    Path("/Users/brewerka/Desktop/structured_diag/src"),
+    Path("/Users/brewerka/Desktop/ml_diag/src"),
 )
 
 for _c in _SRC_CANDIDATES:
@@ -18,7 +18,7 @@ for _c in _SRC_CANDIDATES:
 import pandas as pd
 from mlflow.tracking import MlflowClient
 
-from structured_diag.logging_sdk import RunLogger
+from ml_diag.logging_sdk import RunLogger
 
 _DEFAULT_METRIC_PATTERNS: dict[str, tuple[str, ...]] = {
     "train_loss": (
@@ -312,7 +312,7 @@ def main() -> None:
     }
     meta.update({k: v for k, v in lifted.items() if v is not None and v != ""})
     meta["epochs_planned"] = n_epochs
-    meta["notes"] = f"Converted from MLflow run {rid} (structured_diag.examples.convert_mlflow)."
+    meta["notes"] = f"Converted from MLflow run {rid} (ml_diag.examples.convert_mlflow)."
     meta["mlflow_run_id"] = rid
     meta["mlflow_tracking_uri"] = mlflow.get_tracking_uri()
     if run_name and run_name != rid[:8]:

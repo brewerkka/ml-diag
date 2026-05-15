@@ -6,7 +6,7 @@ import random
 import time
 from pathlib import Path
 
-from structured_diag.logging_sdk import RunLogger
+from ml_diag.logging_sdk import RunLogger
 
 
 def _fake_epoch(epoch: int, *, lr: float, rng: random.Random) -> dict:

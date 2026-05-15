@@ -13,14 +13,14 @@ if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
 
-from structured_diag.diagnosis.arbitrator import ArbitratorConfig  # noqa: E402
-from structured_diag.diagnosis.oof_predictions import (  # noqa: E402
+from ml_diag.diagnosis.arbitrator import ArbitratorConfig              
+from ml_diag.diagnosis.oof_predictions import (              
     generate_oof_predictions,
     write_oof_parquet,
 )
-from structured_diag.features import build_feature_table  # noqa: E402
-from structured_diag.models.flat_baseline import _split_train_test  # noqa: E402
-from structured_diag.utils import setup_logging  # noqa: E402
+from ml_diag.features import build_feature_table              
+from ml_diag.models.flat_baseline import _split_train_test              
+from ml_diag.utils import setup_logging              
 
 
 def _parse_args() -> argparse.Namespace:
@@ -38,7 +38,7 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument(
         "--arbitrator-backend",
         default="auto",
-        choices=["auto", "groq", "anthropic", "template", "none"],
+        choices=["auto", "groq", "ollama", "template", "none"],
         help="`none` skips arbitrator entirely.",
     )
     p.add_argument("--arbitrator-low-conf", type=float, default=0.0)
@@ -62,7 +62,7 @@ def main() -> int:
     arb_cfg: ArbitratorConfig | None = None
     if args.arbitrator_backend != "none":
         arb_cfg = ArbitratorConfig(
-            backend=str(args.arbitrator_backend),  # type: ignore[arg-type]
+            backend=str(args.arbitrator_backend),                          
             cache_path=Path(args.arbitrator_cache),
         )
         print(

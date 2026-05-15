@@ -12,7 +12,7 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from structured_diag.evaluation import holm_bonferroni_adjust  # noqa: E402
+from ml_diag.evaluation import holm_bonferroni_adjust              
 
 PRIMARY: dict = {
     "name": "stacking_gbm accuracy vs flat",

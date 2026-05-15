@@ -13,23 +13,23 @@ if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
 
-from structured_diag.benchmark import partition_corpus  # noqa: E402
-from structured_diag.evaluation import (  # noqa: E402
+from ml_diag.benchmark import partition_corpus              
+from ml_diag.evaluation import (              
     compare_all_slices,
     render_comparison_markdown,
 )
-from structured_diag.features import build_feature_table  # noqa: E402
-from structured_diag.models import (  # noqa: E402
+from ml_diag.features import build_feature_table              
+from ml_diag.models import (              
     load_cascade,
     slices_from_partition,
     train_flat_baseline,
 )
-from structured_diag.models.flat_baseline import (  # noqa: E402
+from ml_diag.models.flat_baseline import (              
     FlatBaselineResult,
     _split_train_test,
 )
-from structured_diag.models.model_zoo import default_zoo  # noqa: E402
-from structured_diag.utils import setup_logging  # noqa: E402
+from ml_diag.models.model_zoo import default_zoo              
+from ml_diag.utils import setup_logging              
 
 
 def _parse_args() -> argparse.Namespace:

@@ -12,13 +12,13 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from structured_diag.benchmark import partition_corpus  # noqa: E402
-from structured_diag.evaluation import report_to_markdown  # noqa: E402
-from structured_diag.features import build_feature_table  # noqa: E402
-from structured_diag.models import save_stage_artifacts, stage1, stage2, stage3  # noqa: E402
-from structured_diag.models.model_zoo import default_zoo  # noqa: E402
-from structured_diag.models.trainer import StageTrainResult  # noqa: E402
-from structured_diag.utils import setup_logging  # noqa: E402
+from ml_diag.benchmark import partition_corpus              
+from ml_diag.evaluation import report_to_markdown              
+from ml_diag.features import build_feature_table              
+from ml_diag.models import save_stage_artifacts, stage1, stage2, stage3              
+from ml_diag.models.model_zoo import default_zoo              
+from ml_diag.models.trainer import StageTrainResult              
+from ml_diag.utils import setup_logging              
 
 
 def _parse_args() -> argparse.Namespace:
@@ -75,7 +75,7 @@ def _write_combined_report(out_dir: Path, results: dict[str, StageTrainResult]) 
     md.append("# Hierarchical diagnosis report")
     md.append("")
     md.append(
-        "Per-stage models trained inside `structured_diag`. "
+        "Per-stage models trained inside `ml_diag`. "
         "Each stage is trained on its own subset; see `docs/architecture.md`."
     )
     md.append("")
@@ -114,7 +114,7 @@ def main() -> int:
                 print(f"Ablation: no features matched prefixes {prefixes} — no-op.")
     partition = partition_corpus(args.corpus, skip_broken=True)
     pt = partition.table.copy()
-    from structured_diag.models.flat_baseline import _split_train_test
+    from ml_diag.models.flat_baseline import _split_train_test
 
     _, test_idx = _split_train_test(X, y, seed=args.seed)
     canonical_test_run_ids = X.index[test_idx].astype(str).tolist()

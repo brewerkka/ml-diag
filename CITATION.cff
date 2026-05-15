@@ -1,6 +1,6 @@
 cff-version: 1.2.0
-title: "ml_diag: Hierarchical diagnosis of ML training failures with constrained LLM arbitration"
-message: "If you use this software in your research, please cite as below."
+title: "ml_diag: иерархическая диагностика ошибок обучения ML-моделей с ограниченным LLM-арбитражем"
+message: "Если вы используете эту библиотеку в исследовании, пожалуйста, цитируйте её следующим образом."
 type: software
 authors:
   - given-names: Milena
@@ -8,13 +8,14 @@ authors:
     affiliation: "МИЭМ НИУ ВШЭ"
     email: mapivovarova26@gmail.com
 abstract: >
-  A Python library for automated diagnosis and interpretation of ML training
-  failures using a hierarchical cascade combined with constrained LLM
-  arbitration (hard-snap), out-of-fold stacking meta-classifier, and
-  split-conformal abstention layer. Six fault classes: healthy, overfitting,
-  underfitting, leakage, label_noise, instability. Validated on three
-  controlled fault-injection corpora (180 / 500 / 800 runs) across 8 tabular
-  datasets.
+  Python-библиотека для автоматизированной диагностики и интерпретации
+  ошибок обучения ML-моделей с использованием иерархического каскада,
+  ограниченного LLM-арбитража (hard-snap), стэкинг-метаклассификатора
+  на out-of-fold предсказаниях и слоя абстенции на split-conformal
+  калибровке. Шесть классов ошибок: healthy, overfitting, underfitting,
+  leakage, label_noise, instability. Валидация выполнена на трёх корпусах
+  контролируемой инъекции ошибок (180 / 500 / 800 запусков) по 8 табличным
+  датасетам.
 keywords:
   - machine-learning
   - fault-diagnosis
@@ -35,6 +36,6 @@ preferred-citation:
     - given-names: Milena
       family-names: Pivovarova
   institution:
-    name: "МИЭМ НИУ ВШЭ (Школа цифровой инженерии)"
+    name: "МИЭМ НИУ ВШЭ"
   year: 2026
   url: "https://github.com/brewerkka/ml-diag"

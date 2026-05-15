@@ -12,11 +12,11 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-import numpy as np  # noqa: E402
-import pandas as pd  # noqa: E402
+import numpy as np              
+import pandas as pd              
 
-from structured_diag.features import build_feature_table  # noqa: E402
-from structured_diag.labels import PRIMARY_LABELS  # noqa: E402
+from ml_diag.features import build_feature_table              
+from ml_diag.labels import PRIMARY_LABELS              
 
 _CORPORA: list[tuple[str, str, str]] = [
     ("8ds", "results/oof_predictions_8ds.parquet", "data/corpus/real_8ds_n5_multi"),

@@ -12,18 +12,18 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from structured_diag.evaluation import build_evidence  # noqa: E402
-from structured_diag.features import (  # noqa: E402
+from ml_diag.evaluation import build_evidence              
+from ml_diag.features import (              
     build_data_integrity_features,
     build_feature_table,
 )
-from structured_diag.interpretation import (  # noqa: E402
+from ml_diag.interpretation import (              
     InterpretationConfig,
     interpret,
     render_markdown,
 )
-from structured_diag.models import diagnose_one, load_cascade  # noqa: E402
-from structured_diag.utils import setup_logging  # noqa: E402
+from ml_diag.models import diagnose_one, load_cascade              
+from ml_diag.utils import setup_logging              
 
 
 def _parse_args() -> argparse.Namespace:
@@ -38,12 +38,12 @@ def _parse_args() -> argparse.Namespace:
     p.add_argument("--run-id", default=None, help="Single run_id (else first --n).")
     p.add_argument("--n", type=int, default=3, help="When --run-id is omitted.")
     p.add_argument(
-        "--backend", default="auto", choices=["auto", "template", "groq", "ollama", "anthropic"]
+        "--backend", default="auto", choices=["auto", "template", "groq", "ollama"]
     )
     p.add_argument(
         "--model",
-        default="claude-haiku-4-5-20251001",
-        help="Anthropic model id (only used with --backend anthropic).",
+        default=None,
+        help="Override default model id for the chosen backend.",
     )
     p.add_argument("--temperature", type=float, default=0.0)
     p.add_argument("--max-tokens", type=int, default=1500)

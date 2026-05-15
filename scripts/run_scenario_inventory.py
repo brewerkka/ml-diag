@@ -11,12 +11,12 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from structured_diag.scenarios import (  # noqa: E402
+from ml_diag.scenarios import (              
     build_inventory,
     validate_inventory,
 )
-from structured_diag.scenarios.inventory import write_inventory  # noqa: E402
-from structured_diag.utils import setup_logging  # noqa: E402
+from ml_diag.scenarios.inventory import write_inventory              
+from ml_diag.utils import setup_logging              
 
 
 def _parse_args() -> argparse.Namespace:

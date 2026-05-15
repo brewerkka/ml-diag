@@ -13,27 +13,27 @@ if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
 
-import pandas as pd  # noqa: E402
+import pandas as pd              
 
-from structured_diag.benchmark import partition_corpus  # noqa: E402
-from structured_diag.evaluation import (  # noqa: E402
+from ml_diag.benchmark import partition_corpus              
+from ml_diag.evaluation import (              
     attribute_errors,
     find_disagreements,
     render_attribution_markdown,
     render_disagreements_markdown,
     summarize_attributions,
 )
-from structured_diag.evaluation.compare_flat_vs_hier import _flat_predict  # noqa: E402
-from structured_diag.features import build_feature_table  # noqa: E402
-from structured_diag.models import (  # noqa: E402
+from ml_diag.evaluation.compare_flat_vs_hier import _flat_predict              
+from ml_diag.features import build_feature_table              
+from ml_diag.models import (              
     load_cascade,
     slices_from_partition,
     train_flat_baseline,
 )
-from structured_diag.models.flat_baseline import _split_train_test  # noqa: E402
-from structured_diag.models.inference import diagnose_batch  # noqa: E402
-from structured_diag.models.model_zoo import default_zoo  # noqa: E402
-from structured_diag.utils import setup_logging  # noqa: E402
+from ml_diag.models.flat_baseline import _split_train_test              
+from ml_diag.models.inference import diagnose_batch              
+from ml_diag.models.model_zoo import default_zoo              
+from ml_diag.utils import setup_logging              
 
 
 def _parse_args() -> argparse.Namespace:

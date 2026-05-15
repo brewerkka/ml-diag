@@ -1,17 +1,3 @@
-"""Smoke and integration tests for structured_diag.
-
-These tests validate that the public API surface of the library works on
-synthetic data: imports resolve, metrics behave correctly, conformal
-calibration produces the expected coverage, and the stacking
-featurizer outputs the documented 33-feature vector.
-
-Run with:
-    pytest tests/
-
-The tests deliberately avoid loading real corpora (which require parquet
-support and large fixtures); they exercise the *logic* of the library
-on tiny synthetic datasets.
-"""
 
 from __future__ import annotations
 
@@ -21,45 +7,36 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-# Ensure src/ is on the path even when pytest is invoked from project root.
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
 
-# ---------------------------------------------------------------------------
-# 1. Import smoke — every public module loads without errors.
-# ---------------------------------------------------------------------------
-
-
 def test_imports_top_level():
-    """Top-level modules import without circular-dependency errors."""
-    import structured_diag.benchmark  # noqa: F401
-    import structured_diag.data  # noqa: F401
-    import structured_diag.diagnosis  # noqa: F401
-    import structured_diag.evaluation  # noqa: F401
-    import structured_diag.features  # noqa: F401
-    import structured_diag.interpretation  # noqa: F401
-    import structured_diag.labels  # noqa: F401
-    import structured_diag.models  # noqa: F401
-    import structured_diag.utils  # noqa: F401
+    import ml_diag.benchmark              
+    import ml_diag.data              
+    import ml_diag.diagnosis              
+    import ml_diag.evaluation              
+    import ml_diag.features              
+    import ml_diag.interpretation              
+    import ml_diag.labels              
+    import ml_diag.models              
+    import ml_diag.utils              
 
 
 def test_imports_diagnosis_submodules():
-    """All diagnosis submodules import (covers conformal, stacking, arbitrator)."""
-    from structured_diag.diagnosis import (
-        arbitrator,  # noqa: F401
-        conformal_layer,  # noqa: F401
-        hybrid_resolver,  # noqa: F401
-        oof_predictions,  # noqa: F401
-        stacking_resolver,  # noqa: F401
+    from ml_diag.diagnosis import (
+        arbitrator,              
+        conformal_layer,              
+        hybrid_resolver,              
+        oof_predictions,              
+        stacking_resolver,              
     )
 
 
 def test_label_vocabulary_consistent():
-    """Primary labels have exactly 6 entries and stage label maps are consistent."""
-    from structured_diag.labels import (
+    from ml_diag.labels import (
         DATA_RELATED,
         FAULTY,
         HEALTHY,
@@ -76,24 +53,18 @@ def test_label_vocabulary_consistent():
     assert FAULTY in STAGE1_LABELS
     assert DATA_RELATED in STAGE2_LABELS
     assert OPT_GEN_RELATED in STAGE2_LABELS
-    # to_stage1: every primary label maps to a Stage1 label.
+
     for c in PRIMARY_LABELS:
         s1 = to_stage1(c)
         assert s1 in STAGE1_LABELS, f"{c} -> {s1} not in STAGE1_LABELS"
-    # to_stage2: faulty primary labels map to a Stage2 label.
+                                                             
     for c in PRIMARY_LABELS:
         if to_stage1(c) == FAULTY:
             assert to_stage2(c) in STAGE2_LABELS
 
 
-# ---------------------------------------------------------------------------
-# 2. Metrics — classification_report and bootstrap CI.
-# ---------------------------------------------------------------------------
-
-
 def test_classification_report_perfect():
-    """Perfect predictions yield acc=1.0 and macro_f1=1.0."""
-    from structured_diag.evaluation.metrics import classification_report
+    from ml_diag.evaluation.metrics import classification_report
 
     y_true = ["healthy", "leakage", "overfitting", "instability"]
     y_pred = ["healthy", "leakage", "overfitting", "instability"]
@@ -104,35 +75,32 @@ def test_classification_report_perfect():
 
 
 def test_classification_report_per_class():
-    """Per-class F1 reports correct values for a known confusion."""
-    from structured_diag.evaluation.metrics import classification_report
+    from ml_diag.evaluation.metrics import classification_report
 
     y_true = ["healthy"] * 5 + ["leakage"] * 5
     y_pred = ["healthy"] * 4 + ["leakage"] + ["leakage"] * 3 + ["healthy"] * 2
     rep = classification_report(y_true, y_pred)
-    # 4 healthy correctly classified, 3 leakage correctly classified
+                                                                    
     assert rep.accuracy == 0.7
-    # both per-class F1 should be present
+                                         
     assert "healthy" in rep.per_class_f1
     assert "leakage" in rep.per_class_f1
 
 
 def test_bootstrap_metric_ci_basic():
-    """Bootstrap CI for accuracy on synthetic data is internally consistent."""
-    from structured_diag.evaluation.metrics import bootstrap_metric_ci
+    from ml_diag.evaluation.metrics import bootstrap_metric_ci
 
     rng = np.random.default_rng(42)
     n = 200
     y_true = rng.choice(["a", "b", "c"], size=n).tolist()
-    y_pred = list(y_true)  # 100% accuracy
+    y_pred = list(y_true)                 
     out = bootstrap_metric_ci(y_true, y_pred, metric="accuracy", n_bootstrap=200)
     assert out["point_estimate"] == 1.0
     assert 0.95 <= out["ci_low"] <= out["ci_high"] <= 1.0
 
 
 def test_bootstrap_delta_ci_zero_when_identical():
-    """When two classifiers agree on every row, Δ accuracy CI brackets zero."""
-    from structured_diag.evaluation.metrics import bootstrap_delta_ci
+    from ml_diag.evaluation.metrics import bootstrap_delta_ci
 
     y_true = ["a", "b", "c"] * 30
     y_a = list(y_true)
@@ -141,32 +109,25 @@ def test_bootstrap_delta_ci_zero_when_identical():
     assert out["delta_point"] == 0.0
 
 
-# ---------------------------------------------------------------------------
-# 3. Conformal layer — calibration and prediction sets.
-# ---------------------------------------------------------------------------
-
-
 def test_conformal_calibration_marginal_coverage():
-    """Empirical coverage on synthetic data approximately matches 1−α target."""
-    from structured_diag.diagnosis.conformal_layer import (
+    from ml_diag.diagnosis.conformal_layer import (
         calibrate_split_conformal,
         evaluate_conformal,
         predict_with_conformal,
     )
-    from structured_diag.labels import PRIMARY_LABELS
+    from ml_diag.labels import PRIMARY_LABELS
 
     rng = np.random.default_rng(0)
     n_cal, n_test = 500, 200
     classes = list(PRIMARY_LABELS)
 
     def _gen_proba(n):
-        # Generate "noisy but informative" probabilities: correct class wins
-        # with Dirichlet noise. Calibration set is exchangeable with test.
+
         ys = rng.choice(classes, size=n).tolist()
         rows = []
         for y in ys:
             base = rng.dirichlet(np.ones(6))
-            # Boost the true class so coverage > 1-α is achievable
+
             target_idx = classes.index(y)
             base[target_idx] += 1.5
             base = base / base.sum()
@@ -182,19 +143,17 @@ def test_conformal_calibration_marginal_coverage():
         calibrator=calibrator,
     )
     metrics = evaluate_conformal(results=results, y_test=y_test)
-    # Marginal coverage should hold approximately at level 1-α=0.9
-    # (minus a small finite-sample slack of ~0.05)
-    assert metrics["empirical_coverage"] >= 0.85, (
-        f"Coverage {metrics['empirical_coverage']:.3f} below 0.85"
-    )
-    # Prediction set sizes are positive
+
+    assert (
+        metrics["empirical_coverage"] >= 0.85
+    ), f"Coverage {metrics['empirical_coverage']:.3f} below 0.85"
+                                       
     assert metrics["average_set_size"] >= 1.0
 
 
 def test_conformal_quantile_finite_sample_correction():
-    """The +1/n finite-sample correction yields the documented quantile index."""
-    from structured_diag.diagnosis.conformal_layer import calibrate_split_conformal
-    from structured_diag.labels import PRIMARY_LABELS
+    from ml_diag.diagnosis.conformal_layer import calibrate_split_conformal
+    from ml_diag.labels import PRIMARY_LABELS
 
     rng = np.random.default_rng(1)
     n_cal = 100
@@ -205,21 +164,15 @@ def test_conformal_quantile_finite_sample_correction():
     )
     y = pd.Series(rng.choice(classes, size=n_cal), name="y")
     cal = calibrate_split_conformal(proba_oof=proba, y_oof=y, alpha=0.05)
-    # quantile is bounded between 0 and 1 (LAC nonconformity range)
+
     assert 0.0 <= cal.quantile <= 1.0
     assert cal.alpha == 0.05
     assert cal.n_calibration == n_cal
 
 
-# ---------------------------------------------------------------------------
-# 4. Stacking featurizer — produces the documented 33-feature vector.
-# ---------------------------------------------------------------------------
-
-
 def _build_dummy_oof_inputs(n=20):
-    """Synthesize the inputs required by stacking_resolver.featurize."""
-    from structured_diag.diagnosis.oof_predictions import STAGE_PROBA_COLS
-    from structured_diag.labels import PRIMARY_LABELS
+    from ml_diag.diagnosis.oof_predictions import STAGE_PROBA_COLS
+    from ml_diag.labels import PRIMARY_LABELS
 
     rng = np.random.default_rng(7)
     idx = [f"r{i}" for i in range(n)]
@@ -227,7 +180,9 @@ def _build_dummy_oof_inputs(n=20):
     flat = pd.DataFrame(rng.dirichlet(np.ones(6), size=n), index=idx, columns=cols)
     casc = pd.DataFrame(rng.dirichlet(np.ones(6), size=n), index=idx, columns=cols)
     sp = pd.DataFrame(
-        rng.random((n, len(STAGE_PROBA_COLS))), index=idx, columns=list(STAGE_PROBA_COLS)
+        rng.random((n, len(STAGE_PROBA_COLS))),
+        index=idx,
+        columns=list(STAGE_PROBA_COLS),
     )
     arb = pd.DataFrame(0.0, index=idx, columns=cols)
     trig = pd.Series(False, index=idx)
@@ -236,8 +191,7 @@ def _build_dummy_oof_inputs(n=20):
 
 
 def test_stacking_featurize_shape():
-    """featurize returns DataFrame with 33 columns and aligned index."""
-    from structured_diag.diagnosis.stacking_resolver import META_FEATURES, featurize
+    from ml_diag.diagnosis.stacking_resolver import META_FEATURES, featurize
 
     flat, casc, sp, arb, trig, conf = _build_dummy_oof_inputs(n=12)
     feats = featurize(
@@ -254,8 +208,7 @@ def test_stacking_featurize_shape():
 
 
 def test_stacking_featurize_preserves_index():
-    """featurize preserves the input index ordering exactly."""
-    from structured_diag.diagnosis.stacking_resolver import featurize
+    from ml_diag.diagnosis.stacking_resolver import featurize
 
     flat, casc, sp, arb, trig, conf = _build_dummy_oof_inputs(n=8)
     feats = featurize(
@@ -269,32 +222,25 @@ def test_stacking_featurize_preserves_index():
     assert list(feats.index) == list(flat.index)
 
 
-# ---------------------------------------------------------------------------
-# 5. Utility helpers — schema alignment.
-# ---------------------------------------------------------------------------
-
-
 def test_align_features_to_schema_drops_extras():
-    """Extra columns are dropped, missing ones imputed, order normalized."""
-    from structured_diag.utils.arrays import align_features_to_schema
+    from ml_diag.utils.arrays import align_features_to_schema
 
     df = pd.DataFrame(
         {
             "a": [1.0, 2.0],
             "b": [3.0, 4.0],
-            "extra": [5.0, 6.0],  # not in target schema
+            "extra": [5.0, 6.0],                        
         }
     )
     aligned = align_features_to_schema(df, target_columns=["a", "b", "missing"])
     assert list(aligned.columns) == ["a", "b", "missing"]
     assert "extra" not in aligned.columns
-    # missing column filled with NaN by default (or 0.0 depending on implementation)
+                                                                                    
     assert aligned.shape == (2, 3)
 
 
 def test_align_features_idempotent():
-    """Aligning to the same schema is a no-op besides column ordering."""
-    from structured_diag.utils.arrays import align_features_to_schema
+    from ml_diag.utils.arrays import align_features_to_schema
 
     df = pd.DataFrame({"b": [1.0, 2.0], "a": [3.0, 4.0]})
     aligned = align_features_to_schema(df, target_columns=["a", "b"])
@@ -305,22 +251,18 @@ def test_align_features_idempotent():
     )
 
 
-# ---------------------------------------------------------------------------
-# 6. Hybrid resolver — agreement_or_flat policy round-trip on synthetic probs.
-# ---------------------------------------------------------------------------
-
-
 def test_hybrid_resolver_agreement_or_flat():
-    """When flat and cascade agree, the resolver returns the agreed class."""
-    from structured_diag.diagnosis import HybridResolverConfig, resolve_batch
-    from structured_diag.labels import PRIMARY_LABELS
+    from ml_diag.diagnosis import HybridResolverConfig, resolve_batch
+    from ml_diag.labels import PRIMARY_LABELS
 
     cols = list(PRIMARY_LABELS)
     n = 10
     rng = np.random.default_rng(3)
     base = rng.dirichlet(np.ones(6), size=n)
     flat = pd.DataFrame(base, columns=cols, index=[f"r{i}" for i in range(n)])
-    cascade = pd.DataFrame(base.copy(), columns=cols, index=flat.index)  # exact agreement
+    cascade = pd.DataFrame(
+        base.copy(), columns=cols, index=flat.index
+    )                   
     cfg = HybridResolverConfig(policy="agreement_or_flat")
     diags = resolve_batch(flat_proba=flat, cascade_proba=cascade, config=cfg)
     assert len(diags) == n
@@ -329,38 +271,20 @@ def test_hybrid_resolver_agreement_or_flat():
     assert actual == expected
 
 
-# ---------------------------------------------------------------------------
-# 7. Evidence layer — classify_evidence_notes returns expected typed labels.
-# ---------------------------------------------------------------------------
-
-
 def test_classify_evidence_notes_callable():
-    """classify_evidence_notes is callable and returns a (decisive, secondary) split."""
-    from structured_diag.evaluation.explanation import classify_evidence_notes
+    from ml_diag.evaluation.explanation import classify_evidence_notes
 
     sample_notes = [
         "early val_loss minimum",
         "saturated near-zero gap",
     ]
     decisive, secondary = classify_evidence_notes(sample_notes, "overfitting")
-    # The function must return two lists; we don't pin individual notes
-    # to the bucket (the rules are tested elsewhere).
     assert isinstance(decisive, list)
     assert isinstance(secondary, list)
 
 
-# ---------------------------------------------------------------------------
-# 8. Property-based tests on arbitrator cache-key invariants (Stage 80).
-# ---------------------------------------------------------------------------
-# These tests guard against silent cache collisions across folds and across
-# evidence content. They are property-based rather than example-based:
-# every test varies a single input dimension and asserts that the cache
-# key changes (or does not change) as expected.
-
-
 def _mock_evidence(curve_note: str = "default note"):
-    """Build a minimal StructuredEvidence object for cache-key tests."""
-    from structured_diag.evaluation.explanation import (
+    from ml_diag.evaluation.explanation import (
         CurveEvidence,
         IntegrityEvidence,
         StructuredEvidence,
@@ -384,8 +308,7 @@ def _mock_evidence(curve_note: str = "default note"):
 
 
 def test_arb_cache_key_changes_with_fold_index():
-    """Cache keys with different ``inner_fold_index`` must differ."""
-    from structured_diag.diagnosis.arbitrator import _cache_key_arbitrator
+    from ml_diag.diagnosis.arbitrator import _cache_key_arbitrator
 
     common = dict(
         run_id="r1",
@@ -405,8 +328,7 @@ def test_arb_cache_key_changes_with_fold_index():
 
 
 def test_arb_cache_key_changes_with_evidence_hash():
-    """Cache keys with different evidence notes must differ."""
-    from structured_diag.diagnosis.arbitrator import _cache_key_arbitrator
+    from ml_diag.diagnosis.arbitrator import _cache_key_arbitrator
 
     common = dict(
         run_id="r1",
@@ -424,8 +346,7 @@ def test_arb_cache_key_changes_with_evidence_hash():
 
 
 def test_arb_cache_key_deterministic_on_identical_inputs():
-    """Cache keys must be identical when all inputs are identical."""
-    from structured_diag.diagnosis.arbitrator import _cache_key_arbitrator
+    from ml_diag.diagnosis.arbitrator import _cache_key_arbitrator
 
     common = dict(
         run_id="r1",
@@ -444,8 +365,7 @@ def test_arb_cache_key_deterministic_on_identical_inputs():
 
 
 def test_arb_cache_key_invariant_to_proba_key_order():
-    """Cache key must not depend on dict-key ordering of proba dicts."""
-    from structured_diag.diagnosis.arbitrator import _cache_key_arbitrator
+    from ml_diag.diagnosis.arbitrator import _cache_key_arbitrator
 
     common = dict(
         run_id="r1",
@@ -467,3 +387,91 @@ def test_arb_cache_key_invariant_to_proba_key_order():
         **common,
     )
     assert k_a == k_b, "key order in proba dict must not affect cache key"
+
+
+def test_diagnose_high_level_api_in_memory():
+    import math
+
+    from ml_diag import Diagnosis, diagnose
+
+    history = pd.DataFrame(
+        [
+            {
+                "epoch": e,
+                "train_loss": 1.0 / (1 + e),
+                "val_loss": 0.9 / (1 + 0.7 * e),
+                "train_acc": 1 - math.exp(-0.2 * (e + 1)),
+                "val_acc": 1 - math.exp(-0.18 * (e + 1)),
+                "lr": 1e-3,
+            }
+            for e in range(20)
+        ]
+    )
+    meta = {
+        "run_id": "smoke_run",
+        "dataset_name": "synthetic",
+        "model_name": "demo",
+        "framework": "pytorch",
+        "optimizer": "adam",
+        "learning_rate": 1e-3,
+        "batch_size": 64,
+        "epochs_planned": 20,
+        "seed": 42,
+    }
+    result = diagnose(meta=meta, history=history)
+    assert isinstance(result, Diagnosis)
+    assert result.run_id == "smoke_run"
+    assert result.label in {
+        "healthy",
+        "overfitting",
+        "underfitting",
+        "leakage",
+        "label_noise",
+        "instability",
+    }
+    assert 0.0 <= result.confidence <= 1.0
+    probs_sum = sum(result.class_probabilities.values())
+    assert 0.99 <= probs_sum <= 1.01
+    assert result.summary
+    assert result.explanation
+    d = result.to_dict()
+    assert d["label"] == result.label
+    assert d["confidence"] == result.confidence
+
+
+def test_diagnose_from_run_logger(tmp_path):
+    from ml_diag import RunLogger, diagnose
+
+    run_dir = tmp_path / "exp_smoke"
+    with RunLogger(
+        output_dir=run_dir,
+        meta={
+            "run_id": "exp_smoke",
+            "dataset_name": "demo",
+            "model_name": "mlp",
+            "framework": "pytorch",
+            "optimizer": "sgd",
+            "learning_rate": 5e-2,
+            "batch_size": 32,
+            "epochs_planned": 10,
+            "seed": 1,
+        },
+    ) as log:
+        for e in range(10):
+            log.log_epoch(
+                epoch=e,
+                train_loss=2.0 + 0.5 * ((-1) ** e),
+                val_loss=2.1 + 0.5 * ((-1) ** e),
+                train_acc=0.1,
+                val_acc=0.1,
+                lr=5e-2,
+            )
+        log.finalize(status="completed")
+
+    result = diagnose(run_dir)
+    assert result.run_id == "exp_smoke"
+    case_out = tmp_path / "case_out"
+    files = result.save(case_out)
+    assert (case_out / "diagnosis.json").is_file()
+    assert (case_out / "case_summary.md").is_file()
+    assert "diagnosis.json" in {Path(p).name for p in files.values()}

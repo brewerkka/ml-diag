@@ -96,8 +96,8 @@ def _predict_on_synthetic_history(
     import joblib
     import pandas as pd
 
-    from structured_diag.data.run_loader import RunRecord
-    from structured_diag.features.run_features import _features_for_run
+    from ml_diag.data.run_loader import RunRecord
+    from ml_diag.features.run_features import _features_for_run
 
     rec = RunRecord(
         run_id="synthetic",
@@ -123,7 +123,7 @@ def _predict_on_synthetic_history(
     cascade_pred = "?"
     if cascade_dir.is_dir():
         try:
-            from structured_diag.diagnosis.hybrid_resolver import _load_cascade_artefacts
+            from ml_diag.diagnosis.hybrid_resolver import _load_cascade_artefacts
 
             cascade = _load_cascade_artefacts(cascade_dir)
             X_aligned = X.reindex(columns=cascade.feature_columns, fill_value=0.0)

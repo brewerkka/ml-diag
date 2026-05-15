@@ -17,7 +17,7 @@ _SCRIPTS = _REPO_ROOT / "scripts"
 if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
 
-from run_openml_holdout import _generate_synthetic_history  # noqa: E402
+from run_openml_holdout import _generate_synthetic_history              
 
 
 def _parse_args() -> argparse.Namespace:
@@ -122,7 +122,7 @@ def main() -> int:
             "matching the empirical pattern described in the source. "
             "This is the **literal replication** path — not full real "
             "training curves, but expert-annotated archetypes.",
-            "* Per-label accuracy reveals which classes the structured_diag "
+            "* Per-label accuracy reveals which classes the ml_diag "
             "pipeline generalizes well to, vs which classes need stronger "
             "feature engineering.",
             "* Scale to 30-50 cases by extending ``data/real_world_failures/"

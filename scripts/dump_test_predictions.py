@@ -10,37 +10,37 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-import numpy as np  # noqa: E402
-import pandas as pd  # noqa: E402
+import numpy as np              
+import pandas as pd              
 
-from structured_diag.diagnosis.conformal_layer import (  # noqa: E402
+from ml_diag.diagnosis.conformal_layer import (              
     calibrate_split_conformal,
     compute_meta_oof_probabilities,
     predict_with_conformal,
 )
-from structured_diag.diagnosis.hybrid_resolver import (  # noqa: E402
+from ml_diag.diagnosis.hybrid_resolver import (              
     cascade_marginal_proba,
     flat_proba_aligned,
 )
-from structured_diag.diagnosis.oof_predictions import (  # noqa: E402
+from ml_diag.diagnosis.oof_predictions import (              
     STAGE_PROBA_COLS,
     read_oof_parquet,
 )
-from structured_diag.diagnosis.stacking_resolver import (  # noqa: E402
+from ml_diag.diagnosis.stacking_resolver import (              
     stacking_predict,
     train_stacking_meta,
 )
-from structured_diag.features import build_feature_table  # noqa: E402
-from structured_diag.models import train_flat_baseline  # noqa: E402
-from structured_diag.models.flat_baseline import _split_train_test  # noqa: E402
-from structured_diag.models.inference import load_cascade  # noqa: E402
-from structured_diag.models.model_zoo import default_zoo  # noqa: E402
+from ml_diag.features import build_feature_table              
+from ml_diag.models import train_flat_baseline              
+from ml_diag.models.flat_baseline import _split_train_test              
+from ml_diag.models.inference import load_cascade              
+from ml_diag.models.model_zoo import default_zoo              
 
 REPO_ROOT = _REPO_ROOT
 
 
 def _compute_cascade_stage_probs_test(cascade, X_test: pd.DataFrame) -> pd.DataFrame:
-    from structured_diag.diagnosis.oof_predictions import _build_cascade_predictions
+    from ml_diag.diagnosis.oof_predictions import _build_cascade_predictions
 
     class _FakeRes:
         def __init__(self, sm):

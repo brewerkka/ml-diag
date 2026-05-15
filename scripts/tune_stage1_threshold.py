@@ -12,19 +12,19 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-import numpy as np  # noqa: E402
-import pandas as pd  # noqa: E402
-from sklearn.model_selection import StratifiedKFold  # noqa: E402
+import numpy as np              
+import pandas as pd              
+from sklearn.model_selection import StratifiedKFold              
 
-from structured_diag.evaluation import classification_report  # noqa: E402
-from structured_diag.features import (  # noqa: E402
+from ml_diag.evaluation import classification_report              
+from ml_diag.features import (              
     build_data_integrity_features,
     build_feature_table,
 )
-from structured_diag.labels import HEALTHY, to_stage1  # noqa: E402
-from structured_diag.models import load_cascade  # noqa: E402
-from structured_diag.models.flat_baseline import _split_train_test  # noqa: E402
-from structured_diag.utils import setup_logging  # noqa: E402
+from ml_diag.labels import HEALTHY, to_stage1              
+from ml_diag.models import load_cascade              
+from ml_diag.models.flat_baseline import _split_train_test              
+from ml_diag.utils import setup_logging              
 
 CANDIDATE_THRESHOLDS = [
     0.50,
@@ -44,7 +44,7 @@ CANDIDATE_THRESHOLDS = [
 
 
 def _stage1_predict(cascade, X: pd.DataFrame, threshold: float) -> tuple[np.ndarray, np.ndarray]:
-    from structured_diag.models.inference import _proba_or_onehot, _row_for_stage
+    from ml_diag.models.inference import _proba_or_onehot, _row_for_stage
 
     preds = []
     p_h = []
@@ -65,10 +65,10 @@ def _out_of_fold_p_healthy(
     seed: int = 0,
     calibrate: bool = True,
 ) -> np.ndarray:
-    from structured_diag.labels import STAGE1_LABELS
-    from structured_diag.models.inference import _proba_or_onehot, _row_for_stage
-    from structured_diag.models.stage1 import prepare as _stage1_prepare
-    from structured_diag.models.trainer import train_stage
+    from ml_diag.labels import STAGE1_LABELS
+    from ml_diag.models.inference import _proba_or_onehot, _row_for_stage
+    from ml_diag.models.stage1 import prepare as _stage1_prepare
+    from ml_diag.models.trainer import train_stage
 
     inner_skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=seed)
     y_stage1 = y_train_primary.map(to_stage1)
@@ -86,7 +86,7 @@ def _out_of_fold_p_healthy(
             seed=seed,
             calibrate=calibrate,
         )
-        from structured_diag.models.inference import _StageModel
+        from ml_diag.models.inference import _StageModel
 
         stage_model = _StageModel(
             name=result.stage_name,
@@ -112,7 +112,7 @@ def _evaluate_threshold_oof(
 ) -> dict:
     preds = np.where(p_healthy >= threshold, HEALTHY, "faulty").astype(object)
     y_binary = y_primary.map(to_stage1).values
-    from structured_diag.evaluation import classification_report
+    from ml_diag.evaluation import classification_report
 
     rep = classification_report(y_binary, preds, label_order=("healthy", "faulty"))
     is_leakage = (y_primary == "leakage").values

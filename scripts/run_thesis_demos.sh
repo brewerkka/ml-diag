@@ -1,20 +1,4 @@
 #!/usr/bin/env bash
-# scripts/run_thesis_demos.sh — produce 3 showcase full-case directories.
-#
-# Pre-requisites:
-#   - the canonical workflow has been run on real_8ds_n5_multi (run_all.sh).
-#   - results/hierarchical/real_8ds_n5_multi/ contains the 4 stage joblibs.
-#
-# The three showcase cases were picked from the manifest as representative:
-#
-#   easy_overfitting   — single-fault, severity=severe, sklearn:breast_cancer
-#                        (canonical "clear" diagnosis)
-#   leakage_severe     — single-fault leakage, severity=severe
-#                        (canonical "hybrid" diagnosis where data-integrity
-#                         features matter)
-#   label_noise_mild   — single-fault label_noise, severity=mild
-#                        (canonical "extended slice" diagnosis: should be
-#                         routed to extended by partition rules)
 
 set -euo pipefail
 
@@ -28,7 +12,6 @@ if [ ! -f "${ART}/stage1_healthy_vs_faulty.joblib" ]; then
     exit 2
 fi
 
-# Run a case with optional arguments forwarded.
 run_case() {
     local label="$1"
     local rid="$2"

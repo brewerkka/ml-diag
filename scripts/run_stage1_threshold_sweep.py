@@ -14,13 +14,13 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-import numpy as np  # noqa: E402
-import pandas as pd  # noqa: E402
+import numpy as np              
+import pandas as pd              
 
-from structured_diag.benchmark import partition_corpus  # noqa: E402
-from structured_diag.evaluation import classification_report  # noqa: E402
-from structured_diag.features import build_feature_table  # noqa: E402
-from structured_diag.labels import (  # noqa: E402
+from ml_diag.benchmark import partition_corpus              
+from ml_diag.evaluation import classification_report              
+from ml_diag.features import build_feature_table              
+from ml_diag.labels import (              
     FAULTY,
     HEALTHY,
     LABEL_NOISE,
@@ -28,13 +28,13 @@ from structured_diag.labels import (  # noqa: E402
     PRIMARY_LABELS,
     to_stage1,
 )
-from structured_diag.models import (  # noqa: E402
+from ml_diag.models import (              
     load_cascade,
     slices_from_partition,
 )
-from structured_diag.models.flat_baseline import _split_train_test  # noqa: E402
-from structured_diag.models.inference import diagnose_batch  # noqa: E402
-from structured_diag.utils import setup_logging  # noqa: E402
+from ml_diag.models.flat_baseline import _split_train_test              
+from ml_diag.models.inference import diagnose_batch              
+from ml_diag.utils import setup_logging              
 
 THRESHOLD_GRID = [0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95]
 
@@ -84,7 +84,7 @@ def _hier_predict_with_threshold(
     *,
     hard_commit: bool = True,
 ) -> tuple[np.ndarray, np.ndarray]:
-    from structured_diag.labels import HEALTHY as _HEALTHY
+    from ml_diag.labels import HEALTHY as _HEALTHY
 
     tuned = replace(cascade, stage1_healthy_threshold=float(threshold), threshold_source="explicit")
     diags = diagnose_batch(tuned, X)
@@ -150,14 +150,14 @@ def _build_oof_p_healthy(
 ) -> np.ndarray:
     from sklearn.model_selection import StratifiedKFold
 
-    from structured_diag.labels import STAGE1_LABELS
-    from structured_diag.models.inference import (
+    from ml_diag.labels import STAGE1_LABELS
+    from ml_diag.models.inference import (
         _proba_or_onehot,
         _row_for_stage,
         _StageModel,
     )
-    from structured_diag.models.stage1 import prepare as _stage1_prepare
-    from structured_diag.models.trainer import train_stage
+    from ml_diag.models.stage1 import prepare as _stage1_prepare
+    from ml_diag.models.trainer import train_stage
 
     inner_skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=seed)
     y_stage1 = y_train.map(to_stage1)

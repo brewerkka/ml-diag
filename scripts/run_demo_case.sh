@@ -1,25 +1,9 @@
 #!/usr/bin/env bash
-# scripts/run_demo_case.sh — one-line demonstrator of the canonical workflow.
-#
-# Usage:
-#     bash scripts/run_demo_case.sh <run_id>
-#     bash scripts/run_demo_case.sh <run_id> anthropic   # uses Anthropic backend if available
-#
-# Environment overrides:
-#     CORPUS=path/to/corpus     # default: data/corpus/real_8ds_n5_multi
-#     OUT=path/to/out_dir       # default: results/cases/<run_id>
-#
-# What it does:
-#     diagnosis → evidence → interpretation → recommendations → case folder.
-# Pre-requisite:
-#     hierarchical artifacts must already exist at
-#     results/hierarchical/$(basename $CORPUS)/. Produce them via
-#     `python scripts/run_hierarchical_train.py`.
 
 set -euo pipefail
 
-if [[ $# -lt 1 ]]; then
-    echo "Usage: bash scripts/run_demo_case.sh <run_id> [backend=template|anthropic]" >&2
+if [[ $
+    echo "Usage: bash scripts/run_demo_case.sh <run_id> [backend=template|groq|ollama]" >&2
     exit 2
 fi
 

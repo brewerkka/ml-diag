@@ -13,28 +13,28 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from structured_diag.data import (  # noqa: E402
+from ml_diag.data import (              
     load_run,
     manifest_for_single_run,
 )
-from structured_diag.evaluation import (  # noqa: E402
+from ml_diag.evaluation import (              
     build_evidence,
     write_case_outputs,
 )
-from structured_diag.features import (  # noqa: E402
+from ml_diag.features import (              
     build_data_integrity_features,
     build_feature_table,
 )
-from structured_diag.interpretation import (  # noqa: E402
+from ml_diag.interpretation import (              
     InterpretationConfig,
     interpret,
 )
-from structured_diag.models import diagnose_one, load_cascade  # noqa: E402
-from structured_diag.patch_eval import (  # noqa: E402
+from ml_diag.models import diagnose_one, load_cascade              
+from ml_diag.patch_eval import (              
     PatchCase,
     evaluate_patch,
 )
-from structured_diag.utils import setup_logging  # noqa: E402
+from ml_diag.utils import setup_logging              
 
 
 def _parse_args() -> argparse.Namespace:
@@ -51,7 +51,7 @@ def _parse_args() -> argparse.Namespace:
         type=Path,
         default=None,
         help="Path to a standalone run directory containing meta.json + history.csv "
-        "(produced e.g. by structured_diag.logging_sdk.RunLogger).",
+        "(produced e.g. by ml_diag.logging_sdk.RunLogger).",
     )
     p.add_argument(
         "--artifacts",
@@ -61,7 +61,7 @@ def _parse_args() -> argparse.Namespace:
     )
     p.add_argument("--out-dir", type=Path, default=None, help="Defaults to results/cases/<run_id>/")
     p.add_argument(
-        "--backend", default="auto", choices=["auto", "template", "groq", "ollama", "anthropic"]
+        "--backend", default="auto", choices=["auto", "template", "groq", "ollama"]
     )
     p.add_argument("--model", default=None, help="Override default per-backend model id.")
     p.add_argument("--max-recommendations", type=int, default=3)

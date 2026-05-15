@@ -1,16 +1,3 @@
-"""Собрать чистый snapshot репозитория для публикации на GitHub.
-
-Запускается из корня проекта. Создаёт `_publish_ml_diag/` рядом с проектом
-с минимальным набором файлов, необходимых для запуска и публикации.
-
-Принципы:
-- Никаких .docx / .bak / draft-файлов
-- Никаких .venv / __pycache__ / IDE-кешей
-- Никаких CLAUDE.md и других внутренних project-memory
-- Никаких thesis-specific артефактов и сборщиков
-- Большие data/results корпуса исключены — данные регенерируются скриптами
-- Сохраняем README, LICENSE, CITATION, .gitignore, CI workflow, pyproject
-"""
 from __future__ import annotations
 
 import shutil
@@ -19,7 +6,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 DEST = REPO_ROOT / "_publish_ml_diag"
 
-# === что копируем (allow-list для top-level) ===
+                                                 
 TOP_LEVEL_FILES = [
     "pyproject.toml",
     "README.md",
@@ -40,7 +27,7 @@ TOP_LEVEL_DIRS = [
     "demo_uploads",
 ]
 
-# === что исключаем при копировании (deny-list, проверяется по basename/частям пути) ===
+                                                                                        
 DENY_NAMES = {
     "__pycache__",
     ".pytest_cache",
@@ -48,11 +35,11 @@ DENY_NAMES = {
     ".venv",
     ".DS_Store",
     "_archive",
-    "ml_diag",   # legacy parallel package, excluded from pyproject build
+    "ml_diag",                                                           
 }
 
 DENY_SCRIPTS = {
-    # thesis-specific сборщики и фигуро-генераторы — не нужны для запуска проекта
+                                                                                 
     "thesis_build",
     "thesis_build_legacy",
     "regenerate_v3_figures.py",
@@ -74,14 +61,13 @@ DENY_SUFFIXES = (
 
 
 def _should_copy(src: Path) -> bool:
-    """Решение: копировать ли этот путь."""
     parts = set(src.parts)
     if parts & DENY_NAMES:
         return False
     name = src.name
     if name in DENY_SCRIPTS:
         return False
-    # bak-файлы вида foo.docx.bak.20260513-144122
+                                                 
     if ".bak." in name:
         return False
     if name.endswith(".docx") or name.endswith(".pyc"):
@@ -92,8 +78,6 @@ def _should_copy(src: Path) -> bool:
 
 
 def _copy_tree(src: Path, dst: Path) -> tuple[int, int]:
-    """Рекурсивно копирует src → dst, применяя _should_copy на каждом узле.
-    Возвращает (n_files, n_skipped)."""
     n_files = 0
     n_skipped = 0
     if src.is_file():
@@ -125,7 +109,7 @@ def main() -> None:
     total_files = 0
     total_skipped = 0
 
-    # 1. Top-level files
+                        
     for fname in TOP_LEVEL_FILES:
         src = REPO_ROOT / fname
         if src.is_file():
@@ -135,7 +119,7 @@ def main() -> None:
         else:
             print(f"  ! missing: {fname}")
 
-    # 2. Top-level dirs
+                       
     for dname in TOP_LEVEL_DIRS:
         src = REPO_ROOT / dname
         if not src.is_dir():
@@ -146,7 +130,7 @@ def main() -> None:
         total_skipped += s
         print(f"  + {dname}/  copied={n}  skipped={s}")
 
-    # 3. Создаём пустую data/ + README с инструкцией где взять корпус
+                                                                     
     data_dir = DEST / "data"
     data_dir.mkdir(exist_ok=True)
     (data_dir / "README.md").write_text(
@@ -162,7 +146,7 @@ def main() -> None:
     )
     print("  + data/README.md  (stub)")
 
-    # 4. Создаём пустую results/ + README
+                                         
     results_dir = DEST / "results"
     results_dir.mkdir(exist_ok=True)
     (results_dir / "README.md").write_text(

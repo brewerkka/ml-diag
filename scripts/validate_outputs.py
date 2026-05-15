@@ -11,7 +11,7 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from structured_diag.evaluation import (  # noqa: E402
+from ml_diag.evaluation import (              
     CASE_OUTPUTS_SCHEMA_VERSION,
     REQUIRED_FILES,
     validate_case_dir,

@@ -12,7 +12,7 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-import numpy as np  # noqa: E402
+import numpy as np              
 
 
 def _f1_for_class(y_true: np.ndarray, y_pred: np.ndarray, cls: str) -> float:

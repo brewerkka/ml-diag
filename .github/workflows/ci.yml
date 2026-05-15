@@ -1,9 +1,5 @@
 name: CI
 
-# Continuous integration: lint, type-check, smoke-test the library on every
-# push and pull_request. Three Python versions covered to spot 3.10→3.12
-# regressions. The fixture corpus is generated synthetically inside the
-# smoke tests, so no large data downloads are required for CI.
 
 on:
   push:
@@ -43,7 +39,7 @@ jobs:
       - name: Type-check with mypy (best-effort)
         run: |
           pip install mypy
-          mypy --ignore-missing-imports src/structured_diag/ || true
+          mypy --ignore-missing-imports src/ml_diag/ || true
         continue-on-error: true
 
       - name: Run smoke tests

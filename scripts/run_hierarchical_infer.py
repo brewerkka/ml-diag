@@ -11,14 +11,14 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from structured_diag.features import build_feature_table  # noqa: E402
-from structured_diag.models import (  # noqa: E402
+from ml_diag.features import build_feature_table              
+from ml_diag.models import (              
     diagnose_batch,
     diagnoses_to_dataframe,
     diagnoses_to_jsonl,
     load_cascade,
 )
-from structured_diag.utils import setup_logging  # noqa: E402
+from ml_diag.utils import setup_logging              
 
 
 def _parse_args() -> argparse.Namespace:

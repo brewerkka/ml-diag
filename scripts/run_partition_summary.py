@@ -15,12 +15,12 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from structured_diag.benchmark import (  # noqa: E402
+from ml_diag.benchmark import (              
     PartitionResult,
     partition_corpus,
     rules_from_mapping,
 )
-from structured_diag.utils import setup_logging  # noqa: E402
+from ml_diag.utils import setup_logging              
 
 
 def _parse_args() -> argparse.Namespace:

@@ -8,7 +8,7 @@ from pathlib import Path
 
 _SRC_CANDIDATES = (
     Path(__file__).resolve().parent.parent / "src",
-    Path("/Users/brewerka/Desktop/structured_diag/src"),
+    Path("/Users/brewerka/Desktop/ml_diag/src"),
 )
 
 for _c in _SRC_CANDIDATES:
@@ -18,7 +18,7 @@ for _c in _SRC_CANDIDATES:
 import pandas as pd
 from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
 
-from structured_diag.logging_sdk import RunLogger
+from ml_diag.logging_sdk import RunLogger
 
 _DEFAULT_TAG_PATTERNS: dict[str, tuple[str, ...]] = {
     "train_loss": (
@@ -222,7 +222,7 @@ def main() -> None:
     meta["epochs_planned"] = n_epochs
     meta["notes"] = (
         f"Converted from TensorBoard log dir {args.tb_logdir} "
-        f"(structured_diag.examples.convert_tensorboard)."
+        f"(ml_diag.examples.convert_tensorboard)."
     )
     meta["tb_logdir"] = str(args.tb_logdir.resolve())
     meta["tb_resolved_tags"] = resolved

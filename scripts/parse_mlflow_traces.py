@@ -1,87 +1,3 @@
-"""Stage 75 — MLflow / Weights & Biases trace parser → structured_diag schema.
-
-Purpose
--------
-Provide a scaffold for converting publicly-available MLflow runs or
-Weights & Biases (wandb) projects into the structured_diag run-level
-schema (``meta.json`` + ``history.csv``). Each parsed trace becomes
-a "silver-labelled" run that can be appended to the corpus or used
-in a holdout evaluation. The reviewer's pillar 2(b) — silver-label
-dataset from MLflow / W&B — is partially closed by this script's
-existence; full coverage requires actual API tokens and trace fetching.
-
-Parsing strategies
-------------------
-
-  1. **MLflow tracking URI** — read via the official ``mlflow`` Python
-     client. Each run's metric history is fetched via
-     ``client.get_metric_history(run_id, key)``; tags and parameters
-     come from ``client.get_run(run_id)``. Map metrics to
-     ``train_loss``, ``val_loss``, ``train_acc``, ``val_acc`` where
-     names roughly match.
-
-  2. **W&B public project** — read via the ``wandb`` Python client.
-     Each run's history is fetched via ``run.history()``; tags and
-     config from ``run.config``.
-
-  3. **Local CSV directory** — fallback for datasets like the FAIR
-     PyTorch examples repo: each subdir has its own ``history.csv``
-     under a known schema. Pass the directory glob, iterate.
-
-Silver-labelling rule
----------------------
-For runs without an explicit human label, we use a simple rule
-combining tags, run name, and final metric values:
-
-  * tags or run_name contains "leak", "leakage", "data_leak"        → leakage
-  * tags or run_name contains "overfit"                              → overfitting
-  * final val_acc / train_acc < 0.7 and small gap                    → underfitting
-  * final val_acc / train_acc < 0.5 from epoch 1                     → underfitting
-  * train_acc - val_acc > 0.20 by final epoch                        → overfitting
-  * val_acc stddev across last 10 epochs > 0.10                      → instability
-  * val_acc converges to >=0.85, train_acc >=0.95, gap < 0.05        → healthy
-  * anything else                                                    → "unlabeled"
-
-Cases labelled "unlabeled" should be reviewed manually.
-
-Output
-------
-For each parsed run: ``data/silver_corpus/<run_id>/{meta.json,history.csv}``.
-Summary report: ``results/silver_corpus_summary.{md,json}``.
-
-Note
-----
-This script does NOT make outbound HTTP calls unless explicitly
-configured with credentials. By default, running it without arguments
-prints the parsing protocol and exits.
-
-Usage
------
-    # Discover protocol (no fetching)
-    python scripts/parse_mlflow_traces.py
-
-    # MLflow mode (requires mlflow client + tracking URI)
-    python scripts/parse_mlflow_traces.py \\
-        --mode mlflow \\
-        --tracking-uri https://example-mlflow.org \\
-        --experiment-name "my_experiment" \\
-        --out-corpus data/silver_corpus/ \\
-        --max-runs 100
-
-    # W&B mode (requires WANDB_API_KEY env var)
-    python scripts/parse_mlflow_traces.py \\
-        --mode wandb \\
-        --entity huggingface \\
-        --project transformers \\
-        --out-corpus data/silver_corpus/ \\
-        --max-runs 100
-
-    # Local CSV mode
-    python scripts/parse_mlflow_traces.py \\
-        --mode local \\
-        --input-dir /path/to/csv_runs/ \\
-        --out-corpus data/silver_corpus/
-"""
 
 from __future__ import annotations
 
@@ -94,12 +10,6 @@ _REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
 def _silver_label(history, tags: dict, run_name: str) -> str:
-    """Assign a silver label from training-dynamics + tags + name.
-
-    See module docstring for the rule. The rule is intentionally simple
-    so it can be auditable; production-grade silver labels would use
-    structured_diag itself as a labelling oracle.
-    """
     text = " ".join(
         [
             str(run_name or ""),
@@ -148,7 +58,6 @@ def _silver_label(history, tags: dict, run_name: str) -> str:
 
 
 def _parse_mlflow(args):
-    """Parse MLflow runs (requires ``mlflow`` package)."""
     try:
         import mlflow
         from mlflow.tracking import MlflowClient
@@ -175,7 +84,7 @@ def _parse_mlflow(args):
     for run in runs:
         run_id = run.info.run_id
         try:
-            import pandas as pd  # noqa: F401
+            import pandas as pd              
 
             metrics_keys = run.data.metrics.keys()
             history_dict = {}
@@ -220,7 +129,6 @@ def _parse_mlflow(args):
 
 
 def _parse_wandb(args):
-    """Parse W&B project (requires ``wandb`` package + WANDB_API_KEY)."""
     try:
         import wandb
     except ImportError:
@@ -274,7 +182,6 @@ def _parse_wandb(args):
 
 
 def _parse_local(args):
-    """Parse a local directory of (run_dir / history.csv) layouts."""
     in_dir = args.input_dir
     if not in_dir or not in_dir.is_dir():
         print(f"ERROR: --input-dir {in_dir} not a directory", file=sys.stderr)
@@ -350,7 +257,7 @@ def _write_summary(rows: list[dict], out_md: Path, out_json: Path) -> None:
             "    --out      data/corpus/silver_corpus.manifest.json",
             "```",
             "",
-            "Then re-train structured_diag on the combined corpus (or run "
+            "Then re-train ml_diag on the combined corpus (or run "
             "as held-out evaluation only).",
             "",
         ]

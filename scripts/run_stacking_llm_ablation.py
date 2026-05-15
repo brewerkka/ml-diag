@@ -12,21 +12,21 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-import numpy as np  # noqa: E402
-import pandas as pd  # noqa: E402
-from sklearn.ensemble import GradientBoostingClassifier  # noqa: E402
-from sklearn.metrics import accuracy_score, f1_score  # noqa: E402
-from sklearn.model_selection import StratifiedKFold  # noqa: E402
+import numpy as np              
+import pandas as pd              
+from sklearn.ensemble import GradientBoostingClassifier              
+from sklearn.metrics import accuracy_score, f1_score              
+from sklearn.model_selection import StratifiedKFold              
 
-from structured_diag.diagnosis.stacking_resolver import (  # noqa: E402
+from ml_diag.diagnosis.stacking_resolver import (              
     _ARB_COLS,
     _ARB_META_COLS,
     featurize,
 )
-from structured_diag.evaluation.metrics import (  # noqa: E402
+from ml_diag.evaluation.metrics import (              
     bootstrap_delta_ci,
 )
-from structured_diag.features import build_feature_table  # noqa: E402
+from ml_diag.features import build_feature_table              
 
 
 def _gbm_factory(seed: int) -> GradientBoostingClassifier:

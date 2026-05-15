@@ -12,8 +12,8 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-import numpy as np  # noqa: E402
-import pandas as pd  # noqa: E402
+import numpy as np              
+import pandas as pd              
 
 
 def _proportion_ci(

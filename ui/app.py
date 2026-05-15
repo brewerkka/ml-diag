@@ -19,9 +19,9 @@ if str(_SRC) not in sys.path:
 import pandas as pd
 import streamlit as st
 
-from structured_diag.evaluation import validate_case_dir
-from structured_diag.evaluation.case_outputs import CASE_OUTPUTS_SCHEMA_VERSION
-from structured_diag.ui_helpers import (
+from ml_diag.evaluation import validate_case_dir
+from ml_diag.evaluation.case_outputs import CASE_OUTPUTS_SCHEMA_VERSION
+from ml_diag.ui_helpers import (
     CaseResult,
     diagnose_case,
     list_corpus_run_ids,
@@ -38,7 +38,7 @@ _T: dict[str, dict[str, str]] = {
             "Upload files: drop your training run's history.csv (and "
             "optionally meta.json) right here.\n"
             "External run: a directory on disk with meta.json + history.csv "
-            "produced by structured_diag.logging_sdk.RunLogger.\n"
+            "produced by ml_diag.logging_sdk.RunLogger.\n"
             "Corpus run: a run_id from an ml_diag-style corpus."
         ),
         "mode_upload": "Upload files",
@@ -93,7 +93,7 @@ _T: dict[str, dict[str, str]] = {
             "* **Upload files** mode lets you drop your `history.csv` (and "
             "optionally `meta.json`) right here — no filesystem path required.\n"
             "* **External run** mode reads a folder on disk that was logged "
-            "by `structured_diag.logging_sdk.RunLogger`.\n"
+            "by `ml_diag.logging_sdk.RunLogger`.\n"
             "* **Corpus run** mode reads a run from an ml_diag-style corpus."
         ),
         "interp_text_lang_note": (
@@ -182,7 +182,7 @@ _T: dict[str, dict[str, str]] = {
             "Upload files: загрузите history.csv (и при желании meta.json) "
             "вашего обучающего запуска прямо сюда.\n"
             "External run: путь к папке с meta.json + history.csv, "
-            "записанной structured_diag.logging_sdk.RunLogger.\n"
+            "записанной ml_diag.logging_sdk.RunLogger.\n"
             "Corpus run: run_id из benchmark-корпуса ml_diag."
         ),
         "mode_upload": "Загрузить файлы",
@@ -237,7 +237,7 @@ _T: dict[str, dict[str, str]] = {
             "* **Загрузить файлы** — дропните `history.csv` (и опционально "
             "`meta.json`) прямо сюда, без указания пути на диске.\n"
             "* **Внешний запуск** — путь к папке, записанной "
-            "`structured_diag.logging_sdk.RunLogger`.\n"
+            "`ml_diag.logging_sdk.RunLogger`.\n"
             "* **Корпусный запуск** — выбор run_id из benchmark-корпуса ml_diag."
         ),
         "interp_text_lang_note": (
@@ -341,7 +341,7 @@ _EXPECTED_HISTORY_COLS = (
 def _uploads_root() -> Path:
     root = st.session_state.get("_uploads_root")
     if root is None:
-        root = Path(tempfile.gettempdir()) / "structured_diag_ui_uploads"
+        root = Path(tempfile.gettempdir()) / "ml_diag_ui_uploads"
         root.mkdir(parents=True, exist_ok=True)
         st.session_state["_uploads_root"] = root
     return root
@@ -725,7 +725,7 @@ def _run_diagnosis() -> CaseResult | None:
         except ValueError as e:
             st.error(_t("err_upload_rejected", msg=str(e)))
             return None
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:                
             st.error(_t("err_upload_failed", msg=f"{type(e).__name__}: {e}"))
             return None
         for w in warnings:
@@ -753,7 +753,7 @@ def _run_diagnosis() -> CaseResult | None:
             st.error(_t("err_file_not_found", msg=str(e)))
         except KeyError as e:
             st.error(_t("err_run_not_in_table", msg=str(e)))
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:                
             st.error(_t("err_diag_failed", msg=f"{type(e).__name__}: {e}"))
     return None
 

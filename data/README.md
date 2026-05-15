@@ -3,6 +3,6 @@
 Корпуса экспериментов (real_3ds_n3_multi, real_5ds_n5_multi, real_8ds_n5_multi) не включены в репозиторий из-за размера (~45 MB).
 
 Способы получить:
-1. Сгенерировать локально через `scripts/run_scenario_inventory.py`    с конфигурацией из `configs/default.yaml`.
-2. Скачать с релиз-страницы проекта (если опубликована).
-3. Связаться с автором.
+1. Сгенерировать локально через `scripts/run_scenario_inventory.py`    с конфигурацией из `configs/default.yaml`
+2. Скачать с релиз-страницы проекта (если опубликована)
+3. Написать мне на почту: mapivovarova26@gmail.com или в tg: @brewerka
