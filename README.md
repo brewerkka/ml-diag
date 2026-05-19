@@ -2,7 +2,7 @@
 
 `ml_diag` — библиотека автоматизированной диагностики ошибок обучения ML-моделей по метаданным экспериментов и кривым обучения.
 
-## Быстрый старт — 30 секунд
+## Быстрый старт
 
 ```bash
 pip install ml_diag
@@ -17,10 +17,10 @@ print(result.confidence)                # 0.84
 for rec in result.recommendations:
     print(rec["action_name"], "—", rec["rationale"])
 
-result.save("results/cases/my_exp")     # полный отчёт на диск
+result.save("results/cases/my_exp")     # полный отчет на диск
 ```
 
-Пакет идёт с **предобученным каскадом из коробки** — никаких отдельных артефактов скачивать не нужно.
+Пакет идет с **предобученным каскадом из коробки** — никаких отдельных артефактов скачивать не нужно.
 
 Альтернативный вариант — передать `meta` и `history` напрямую:
 
@@ -67,13 +67,13 @@ result = diagnose("runs/exp_001")
 | `alternatives` | `list[(str, float)]` | Топ-K альтернативных гипотез |
 | `class_probabilities` | `dict[str, float]` | Полное распределение вероятностей |
 | `summary` | `str` | Короткое резюме |
-| `explanation` | `str` | Развёрнутый разбор |
+| `explanation` | `str` | Развернутый разбор |
 | `symptoms` | `list[str]` | Конкретные наблюдения из evidence |
 | `recommendations` | `list[dict]` | Корректирующие действия из allowlist |
 | `warnings` | `list[str]` | Например, «LLM-бэкенд недоступен» |
 | `evidence` | `dict` | Структурированное свидетельство |
 
-Методы: `result.to_dict()`, `result.save(out_dir)` — записывает 9 файлов отчёта (`diagnosis.json`, `evidence.md`, `interpretation.md`, `curves.png`, ...).
+Методы: `result.to_dict()`, `result.save(out_dir)` — записывает 9 файлов отчета (`diagnosis.json`, `evidence.md`, `interpretation.md`, `curves.png`, ...).
 
 ## Диагностические классы
 
@@ -105,7 +105,7 @@ result = diagnose("runs/exp_001")
 | `scenarios/` | инвентаризация и проверка сценариев |
 | `models/` | плоский бейзлайн и иерархический каскад |
 | `diagnosis/` | гибридные резолверы, стэкинг, арбитраж |
-| `evaluation/` | метрики, сравнение моделей, отчёты |
+| `evaluation/` | метрики, сравнение моделей, отчеты |
 | `interpretation/` | шаблонная и LLM-интерпретация |
 | `actions/` | белый список корректирующих действий |
 | `logging_sdk/` | логирование внешних запусков |
@@ -119,15 +119,6 @@ result = diagnose("runs/exp_001")
 ```bash
 pip install ml_diag
 ```
-
-С опциональными зависимостями:
-
-```bash
-pip install "ml_diag[ui]"      # Streamlit-демо
-pip install "ml_diag[llm]"     # Groq LLM backend
-pip install "ml_diag[ui,llm]"  # всё вместе
-```
-
 Для разработки (включая CLI-скрипты, тесты, линтеры) — клонировать репозиторий:
 
 ```bash
@@ -138,11 +129,11 @@ source .venv/bin/activate
 pip install -e ".[dev,ui,llm]"
 ```
 
-## LLM-интерпретация (опционально)
+## LLM-интерпретация
 
 По умолчанию `diagnose()` использует детерминированный template-бэкенд — никаких LLM-вызовов, ключей и сетевых обращений. Текст рекомендаций собирается из шаблонов на основе диагноза и evidence.
 
-Если хотите более развёрнутую интерпретацию через LLM, доступны два бэкенда:
+Если хотите более развернутую интерпретацию через LLM, доступны два бэкенда:
 
 **Groq Cloud** (бесплатный тариф доступен):
 
@@ -152,12 +143,12 @@ export GROQ_API_KEY=gsk_...                 # получить на console.groq
 ```
 
 ```python
-result = diagnose(run_dir, backend="auto")   # пробует groq → ollama → template
+result = diagnose(run_dir, backend="auto")   # пробует groq - ollama - template
 # или
 result = diagnose(run_dir, backend="groq")
 ```
 
-**Ollama** (локально, бесплатно):
+**Ollama**:
 
 ```bash
 ollama serve                                  # запустить сервер
@@ -242,16 +233,6 @@ streamlit run ui/app.py
 
 - диагностика запуска из корпуса;
 - диагностика внешнего запуска в формате `meta.json` + `history.csv`.
-
-## Инварианты проекта
-
-- LLM не является самостоятельным диагностом.
-- LLM-арбитр выбирает только между предсказаниями плоского бейзлайна и каскада.
-- Корректирующие действия выбираются только из белого списка.
-- При недоступности LLM используется шаблонный бэкенд.
-- Корпус не изменяется во время диагностики.
-- Все основные артефакты сохраняются в версионированном формате.
-- OOF-протокол проверяется runtime-assertion на отсутствие утечки.
 
 ## Статус
 
